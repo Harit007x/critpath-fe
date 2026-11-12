@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { getApiErrorMessage } from "@/lib/errors";
+import { MAX_XER_MB } from "@/lib/xer-upload";
 import { cn } from "@/lib/utils";
 import { checkPaths, formatDateTime } from "@/pages/check/labels";
 import type { XerSample, XerUpload } from "@/services/xer.service";
@@ -88,7 +89,7 @@ function UploadDropzone({ onFile, uploading }: { onFile: (file: File) => void; u
             <RiUpload2Line className="size-5" />
           </span>
           <p className="text-sm font-medium">Drop a .xer file here, or click to choose</p>
-          <p className="text-xs text-muted-foreground">Primavera P6 export · up to 25 MB</p>
+          <p className="text-xs text-muted-foreground">Primavera P6 export · up to {MAX_XER_MB} MB</p>
         </>
       )}
       <input

@@ -1,5 +1,6 @@
 /** Same limit as critpath-be's upload route, checked here first so a bad file is turned away at once. */
-export const MAX_XER_BYTES = 25 * 1024 * 1024;
+export const MAX_XER_BYTES = 50 * 1024 * 1024;
+export const MAX_XER_MB = MAX_XER_BYTES / 1024 / 1024;
 
 /** Why this file cannot be uploaded, in words to show the user; null when it can. */
 export function xerUploadProblem(file: Pick<File, "name" | "size">): string | null {
@@ -8,6 +9,6 @@ export function xerUploadProblem(file: Pick<File, "name" | "size">): string | nu
   }
   if (!/\.xer$/i.test(file.name)) return "Choose a Primavera P6 .xer file.";
   if (file.size === 0) return "This file is empty.";
-  if (file.size > MAX_XER_BYTES) return "Files can be at most 25 MB.";
+  if (file.size > MAX_XER_BYTES) return `Files can be at most ${MAX_XER_MB} MB.`;
   return null;
 }

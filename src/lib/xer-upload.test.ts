@@ -15,9 +15,9 @@ describe("xerUploadProblem", () => {
     expect(xerUploadProblem(file("schedule.csv"))).toMatch(/Spreadsheets/);
   });
 
-  it("turns away other files, empty files and files over 25 MB", () => {
+  it("turns away other files, empty files and files over 50 MB", () => {
     expect(xerUploadProblem(file("notes.pdf"))).toBe("Choose a Primavera P6 .xer file.");
     expect(xerUploadProblem(file("schedule.xer", 0))).toBe("This file is empty.");
-    expect(xerUploadProblem(file("schedule.xer", MAX_XER_BYTES + 1))).toBe("Files can be at most 25 MB.");
+    expect(xerUploadProblem(file("schedule.xer", MAX_XER_BYTES + 1))).toBe("Files can be at most 50 MB.");
   });
 });
