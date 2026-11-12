@@ -101,11 +101,26 @@ export const xerService = {
     return data.data;
   },
 
-  /** Checks and stores a file; the same file again returns the stored copy, with `alreadyStored`. */
-  async checkFile(file: File): Promise<XerUploadResult> {
+  /** The stored upload with this SHA-256 (hex), or null: lets a file already stored skip the upload. */
+  async findStored(sha256: string): Promise<{ id: string; uploadedAt: string } | null> {
+    const { data } = await api.get<Envelope<{ id: string; uploadedAt: string } | null>>(`/xer/stored/${sha256}`);
+    return data.data;
+  },
+
+  /**
+   * Checks and stores a file, sent plain or gzipped (`body`) under its own `name`; the same file
+   * again returns the stored copy, with `alreadyStored`. `onProgress` gets the bytes sent so far.
+   */
+  async checkFile(
+    body: Blob,
+    name: string,
+    onProgress?: (loaded: number, total: number) => void,
+  ): Promise<XerUploadResult> {
     const form = new FormData();
-    form.append("file", file);
-    const { data } = await api.post<Envelope<XerUploadResult>>("/xer/check", form);
+    form.append("file", body, name);
+    const { data } = await api.post<Envelope<XerUploadResult>>("/xer/check", form, {
+      onUploadProgress: (event) => onProgress?.(event.loaded, event.total ?? body.size),
+    });
     return data.data;
   },
 

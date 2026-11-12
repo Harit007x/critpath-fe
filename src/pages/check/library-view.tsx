@@ -7,11 +7,14 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Spinner } from "@/components/ui/spinner";
 import { getApiErrorMessage } from "@/lib/errors";
+import { formatTimeLeft } from "@/lib/upload-progress";
 import { MAX_XER_MB } from "@/lib/xer-upload";
 import { cn } from "@/lib/utils";
 import { checkPaths, formatDateTime } from "@/pages/check/labels";
+import type { UploadStage } from "@/pages/check/send-xer";
 import type { XerSample, XerUpload } from "@/services/xer.service";
 
 /** The start screen: upload a file, try a sample, or reopen an earlier upload. */
@@ -20,6 +23,7 @@ export function LibraryView({
   uploads,
   onFile,
   uploading,
+  stage,
   uploadError,
 }: {
   samples: XerSample[];
@@ -27,6 +31,8 @@ export function LibraryView({
   onFile: (file: File) => void;
   /** The file being checked, while it uploads. */
   uploading: File | null;
+  /** Where the file is on its way to a report, while `uploading`. */
+  stage: UploadStage | null;
   uploadError: unknown;
 }) {
   return (
@@ -38,7 +44,7 @@ export function LibraryView({
       />
 
       <div className="flex flex-col gap-3">
-        <UploadDropzone onFile={onFile} uploading={uploading} />
+        <UploadDropzone onFile={onFile} uploading={uploading} stage={stage} />
         {uploadError != null && !uploading && <UploadError error={uploadError} />}
         {samples.length > 0 && <SampleLinks samples={samples} />}
       </div>
@@ -48,7 +54,15 @@ export function LibraryView({
   );
 }
 
-function UploadDropzone({ onFile, uploading }: { onFile: (file: File) => void; uploading: File | null }) {
+function UploadDropzone({
+  onFile,
+  uploading,
+  stage,
+}: {
+  onFile: (file: File) => void;
+  uploading: File | null;
+  stage: UploadStage | null;
+}) {
   const input = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
 
@@ -79,10 +93,7 @@ function UploadDropzone({ onFile, uploading }: { onFile: (file: File) => void; u
       )}
     >
       {uploading ? (
-        <>
-          <Spinner className="size-6 text-primary" />
-          <p className="text-sm font-medium">Checking {uploading.name}…</p>
-        </>
+        <UploadStatus file={uploading} stage={stage} />
       ) : (
         <>
           <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -103,6 +114,33 @@ function UploadDropzone({ onFile, uploading }: { onFile: (file: File) => void; u
         }}
       />
     </div>
+  );
+}
+
+/** Preparing the file, sending it (bar, percent, time left), then checking it, which takes seconds. */
+function UploadStatus({ file, stage }: { file: File; stage: UploadStage | null }) {
+  if (stage?.stage === "uploading") {
+    return (
+      <>
+        <p className="text-sm font-medium">Uploading {file.name}</p>
+        <Progress value={stage.percent} aria-label="Upload progress" className="h-1.5 w-full max-w-sm" />
+        <p className="text-xs text-muted-foreground tabular-nums">
+          {stage.percent}%{stage.secondsLeft != null && ` · ${formatTimeLeft(stage.secondsLeft)}`}
+        </p>
+      </>
+    );
+  }
+  const checking = stage?.stage === "checking";
+  return (
+    <>
+      <Spinner className="size-6 text-primary" />
+      <p className="text-sm font-medium">
+        {checking ? "Checking" : "Preparing"} {file.name}…
+      </p>
+      <p className="text-xs text-muted-foreground">
+        {checking ? "Uploaded, reading the schedule" : "Compressing it to upload faster"}
+      </p>
+    </>
   );
 }
 
