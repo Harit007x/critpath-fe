@@ -9,13 +9,12 @@ import { Spinner } from "@/components/ui/spinner";
 import { getApiErrorMessage } from "@/lib/errors";
 import { cn } from "@/lib/utils";
 import { checkPaths, formatDateTime } from "@/pages/check/labels";
-import { AskPanel } from "@/pages/check/report/ask-panel";
 import { ActivityTable, BrokenRowsTable } from "@/pages/check/report/finding-tables";
 import { findingsOf, firstFlagged, type Finding, type FindingId } from "@/pages/check/report/findings";
 import { FloatChart } from "@/pages/check/report/float-chart";
 import { xerService, type XerReport } from "@/services/xer.service";
 
-/** One file's screen: what is wrong with it, where, and a place to ask about it. */
+/** One file's screen: what is wrong with it, and where. */
 export function ReportView({
   report,
   loading,
@@ -92,12 +91,6 @@ function Report({ report, alreadyStored }: { report: XerReport; alreadyStored: b
           )}
         </CardContent>
       </Card>
-
-      {report.file.id ? (
-        <AskPanel key={report.file.id} fileId={report.file.id} />
-      ) : (
-        <p className="text-xs text-muted-foreground">Upload this file to ask questions about it.</p>
-      )}
 
       <ScheduleDetails report={report} />
     </>
