@@ -34,7 +34,7 @@ export function SessionWatcher() {
   return <Outlet />;
 }
 
-/** Auth screens: unreachable while signed in (they go on to `?next=`, or Home). */
+/** Auth screens: unreachable while signed in (they go on to `?next=`, or the checker). */
 export function GuestRoute() {
   const sessionActive = useAuthStore(isSessionActive);
   const { search } = useLocation();
@@ -54,5 +54,5 @@ export function ProtectedRoute() {
 
 export function RootRedirect() {
   const sessionActive = useAuthStore(isSessionActive);
-  return <Navigate to={sessionActive ? "/home" : "/login"} replace />;
+  return <Navigate to={sessionActive ? "/check" : "/login"} replace />;
 }

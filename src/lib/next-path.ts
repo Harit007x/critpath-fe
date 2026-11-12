@@ -3,7 +3,7 @@
  * Anything else (another origin, `//host`, `/\host`) is ignored, so the parameter cannot be used
  * to send someone off-site after they sign in.
  */
-export function nextPath(search: string, fallback = "/home"): string {
+export function nextPath(search: string, fallback = "/check"): string {
   const next = new URLSearchParams(search).get("next");
   return next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\")
     ? next
@@ -17,7 +17,7 @@ export const nextQuery = (path: string) =>
 /** `/verify-email` for someone who must open their verification link. */
 export function verifyEmailPath(email: string, next: string, from?: "signin"): string {
   const params = new URLSearchParams({ email });
-  if (next !== "/home") params.set("next", next);
+  if (next !== "/check") params.set("next", next);
   if (from) params.set("from", from);
   return `/verify-email?${params}`;
 }

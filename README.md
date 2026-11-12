@@ -8,6 +8,23 @@ top bar, light/dark theme) built on the design system. Add your product's pages 
 to the design system (tokens in `src/index.css`), React Router 7, React Hook Form + Zod,
 Zustand, Axios, TanStack Table, Better Auth client, Sonner.
 
+## Schedule checker
+
+`/check` (where `/` opens) shows a Primavera P6 `.xer` schedule checked by the API
+([critpath-be](https://github.com/Harit007x/critpath-be), which also holds the two sample files
+and explains each rule):
+
+- pick one of the two bundled public samples, or drop in your own `.xer` file
+- file facts: project, P6 version, data date, activity and relationship counts
+- the three checks (missing links, negative float, high float), each with the activities behind it
+- one chart: checked activities by total float, in working days, with the negative and high-float
+  bands coloured
+- every broken row with its line number, table, field and reason
+
+The page is `src/pages/check/page.tsx`; the API calls and response types are
+`src/services/xer.service.ts`. Sign-in is switched off (`AUTH_ENABLED` in `src/config/app.ts`),
+so every page opens without an account.
+
 ## Run locally
 
 Start the API first (`../critpath-be`, http://localhost:5000), then:

@@ -37,7 +37,7 @@ export class EmailNotVerifiedError extends Error {
  * Where the verification link lands after Better Auth checks it: `/verify-email`, which goes on
  * to `next` once signed in, or shows `?error=` (an expired or used link) with a way to resend.
  */
-const verifyCallbackURL = (next = "/home") =>
+const verifyCallbackURL = (next = "/check") =>
   `${window.location.origin}/verify-email?next=${encodeURIComponent(next)}`;
 
 export const authService = {

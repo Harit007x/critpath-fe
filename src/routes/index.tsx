@@ -16,8 +16,8 @@ import SignupPage from "@/pages/signup/page";
 import ForgotPasswordPage from "@/pages/forgot-password/page";
 import ResetPasswordPage from "@/pages/reset-password/page";
 import VerifyEmailPage from "@/pages/verify-email/page";
-import HomePage from "@/pages/home/page";
 import SettingsPage from "@/pages/settings/page";
+import CheckPage from "@/pages/check/page";
 
 // Auth screens. With AUTH_ENABLED they are unreachable while signed in (GuestRoute).
 const authPages: RouteObject[] = [
@@ -34,7 +34,7 @@ const appPages: RouteObject[] = [
   {
     element: <AppLayout />,
     children: [
-      { path: "/home", element: <HomePage /> },
+      { path: "/check", element: <CheckPage /> },
       { path: "/settings", element: <SettingsPage /> },
     ],
   },
@@ -51,9 +51,9 @@ const withAuth: RouteObject[] = [
   { element: <ProtectedRoute />, children: appPages },
 ];
 
-// Sign-in disconnected (config/app.ts): every page is public and `/` opens Home.
+// Sign-in disconnected (config/app.ts): every page is public and `/` opens the schedule checker.
 const withoutAuth: RouteObject[] = [
-  { path: "/", element: <Navigate to="/home" replace /> },
+  { path: "/", element: <Navigate to="/check" replace /> },
   verifyEmail,
   ...authPages,
   ...appPages,

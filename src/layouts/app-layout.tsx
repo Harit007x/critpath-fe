@@ -1,4 +1,5 @@
 import SideNav from "@/components/side-nav";
+import { RiFileChart2Line } from "@remixicon/react";
 import { Icons } from "@/components/icons";
 import type { SideNavbar } from "@/utils/types";
 import { Outlet } from "react-router-dom";
@@ -11,9 +12,9 @@ const navItems: SideNavbar[] = [
     title: "Main",
     items: [
       {
-        title: "Home",
-        path: "/home",
-        icon: <Icons.home />,
+        title: "Schedule checker",
+        path: "/check",
+        icon: <RiFileChart2Line />,
       },
     ],
   },
