@@ -17,7 +17,8 @@ import ForgotPasswordPage from "@/pages/forgot-password/page";
 import ResetPasswordPage from "@/pages/reset-password/page";
 import VerifyEmailPage from "@/pages/verify-email/page";
 import SettingsPage from "@/pages/settings/page";
-import CheckPage from "@/pages/check/page";
+import CheckLibraryPage from "@/pages/check/page";
+import CheckReportPage from "@/pages/check/report/page";
 
 // Auth screens. With AUTH_ENABLED they are unreachable while signed in (GuestRoute).
 const authPages: RouteObject[] = [
@@ -34,7 +35,9 @@ const appPages: RouteObject[] = [
   {
     element: <AppLayout />,
     children: [
-      { path: "/check", element: <CheckPage /> },
+      { path: "/check", element: <CheckLibraryPage /> },
+      { path: "/check/files/:fileId", element: <CheckReportPage /> },
+      { path: "/check/samples/:sampleId", element: <CheckReportPage /> },
       { path: "/settings", element: <SettingsPage /> },
     ],
   },
@@ -51,11 +54,11 @@ const withAuth: RouteObject[] = [
   { element: <ProtectedRoute />, children: appPages },
 ];
 
-// Sign-in disconnected (config/app.ts): every page is public and `/` opens the schedule checker.
+// Sign-in disconnected (config/app.ts): the app pages are public and the auth screens are not
+// routed at all, so /login, /signup and the rest fall through to the catch-all and land on the
+// schedule checker.
 const withoutAuth: RouteObject[] = [
   { path: "/", element: <Navigate to="/check" replace /> },
-  verifyEmail,
-  ...authPages,
   ...appPages,
 ];
 

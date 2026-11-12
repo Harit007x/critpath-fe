@@ -13,6 +13,7 @@ import {
 } from "@tanstack/react-table";
 import type {
   ColumnDef,
+  Row,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -34,15 +35,31 @@ import type { DataTableToolbarProps } from "./data-table-toolbar";
 import { DataTablePagination } from "./data-table-pagination";
 import { Icons } from "../icons";
 
+/** For a faceted-filter column: keeps rows whose value is one of the ticked options. */
+export function inFacet<TData>(row: Row<TData>, columnId: string, value: string[]): boolean {
+  return value.includes(String(row.getValue(columnId)));
+}
+
+/** Columns that can't be hidden: for a table with no "View" menu to bring them back. */
+export function fixedColumns<TData>(columns: ColumnDef<TData>[]): ColumnDef<TData>[] {
+  return columns.map((column) => ({ ...column, enableHiding: false }));
+}
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  /** Rows per page to start with. */
+  pageSize?: number;
+  /** Makes each row a button. */
+  onRowClick?: (row: Row<TData>) => void;
+  /** Shown when no row matches. */
+  emptyText?: string;
   /** Render the search / faceted-filter / column-visibility toolbar. */
   toolbar?: boolean;
   /** Toolbar configuration, forwarded when `toolbar` is enabled. */
   toolbarProps?: Omit<DataTableToolbarProps<TData>, "table">;
   manualPagination?: boolean;
-  gridCount: number;
+  gridCount?: number;
   loading?: boolean;
   handleGridChange?: (updater: Updater<PaginationState>) => void;
   gridColor?: "bg-background";
@@ -58,6 +75,9 @@ export function DataTable<TData, TValue>({
   gridCount,
   loading,
   gridColor,
+  pageSize = 10,
+  onRowClick,
+  emptyText = "No results.",
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [columnVisibility, setColumnVisibility] =
@@ -69,7 +89,7 @@ export function DataTable<TData, TValue>({
 
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize,
   });
 
   React.useEffect(() => {
@@ -93,14 +113,8 @@ export function DataTable<TData, TValue>({
       columnFilters,
       pagination,
     },
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 10,
-      },
-    },
     manualPagination: manualPagination,
-    rowCount: gridCount,
+    rowCount: manualPagination ? gridCount : undefined,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -149,7 +163,13 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="hover:bg-muted/50 data-[state=selected]:bg-muted"
+                  className={`hover:bg-muted/50 data-[state=selected]:bg-muted ${onRowClick ? "cursor-pointer" : ""}`}
+                  {...(onRowClick && {
+                    tabIndex: 0,
+                    onClick: () => onRowClick(row),
+                    onKeyDown: (event: React.KeyboardEvent) =>
+                      (event.key === "Enter" || event.key === " ") && onRowClick(row),
+                  })}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="px-2 py-1.5">
@@ -178,7 +198,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {emptyText}
                 </TableCell>
               </TableRow>
             )}

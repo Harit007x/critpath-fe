@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
 
-/** The public site's legal pages. */
-const TERMS_URL = "https://www.thecritpath.com/terms";
-const PRIVACY_URL = "https://www.thecritpath.com/privacy";
+/** The legal pages, when a deployment has them (VITE_TERMS_URL, VITE_PRIVACY_URL); plain text otherwise. */
+const TERMS_URL = import.meta.env.VITE_TERMS_URL as string | undefined;
+const PRIVACY_URL = import.meta.env.VITE_PRIVACY_URL as string | undefined;
 
-function LegalLink({ href, children }: { href: string; children: ReactNode }) {
+function LegalLink({ href, children }: { href: string | undefined; children: ReactNode }) {
+  if (!href) return <>{children}</>;
   return (
     <a
       className="underline underline-offset-2 transition-colors hover:text-foreground"

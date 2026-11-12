@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc -b",
     "preview": "cross-env NODE_ENV=production vite preview",
-    "preview:cf": "wrangler dev"
+    "preview:cf": "wrangler dev",
+    "deploy:cf": "cross-env VITE_API_BASE_URL=/api pnpm build && wrangler deploy"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",

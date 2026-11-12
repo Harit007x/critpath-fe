@@ -38,13 +38,13 @@ export function DataTableToolbar<TData>({
 
   return (
     <div className="flex items-center justify-between gap-2">
-      <div className="flex flex-1 items-center space-x-2">
+      <div className="flex flex-1 flex-wrap items-center gap-2">
         {column && (
           <Input
             placeholder={searchPlaceholder ?? "Search..."}
             value={(column.getFilterValue() as string) ?? ""}
             onChange={(event) => column.setFilterValue(event.target.value)}
-            className="h-8 w-[150px] lg:w-[350px]"
+            className="h-8 w-full sm:w-[260px]"
           />
         )}
 

@@ -10,18 +10,19 @@ Zustand, Axios, TanStack Table, Better Auth client, Sonner.
 
 ## Schedule checker
 
-`/check` (where `/` opens) shows a Primavera P6 `.xer` schedule checked by the API
-([critpath-be](https://github.com/Harit007x/critpath-be), which also holds the two sample files
+Two screens, so each has one job
+([critpath-be](https://github.com/Harit007x/critpath-be) checks the files, holds the two samples
 and explains each rule):
 
-- pick one of the two bundled public samples, or drop in your own `.xer` file
-- file facts: project, P6 version, data date, activity and relationship counts
-- the three checks (missing links, negative float, high float), each with the activities behind it
-- one chart: checked activities by total float, in working days, with the negative and high-float
-  bands coloured
-- every broken row with its line number, table, field and reason
+- **`/check`** (where `/` opens): drop in a `.xer` file, try a bundled sample, or reopen a recent
+  upload. Every upload is stored by the API with its report.
+- **`/check/files/:id`** and **`/check/samples/:id`**: one file's report. Four tiles (missing
+  links, negative float, high float, broken rows) open the list behind each, starting on the first that found problems; then
+  a chat about the file, answered by [critpath-ai](https://github.com/Harit007x/critpath-ai)
+  through the API; then the file's counts and a total-float chart.
 
-The page is `src/pages/check/page.tsx`; the API calls and response types are
+Code: `src/pages/check/page.tsx` and `library-view.tsx` (the start screen),
+`src/pages/check/report/` (the report screen, its tables, chart and chat), API calls and types in
 `src/services/xer.service.ts`. Sign-in is switched off (`AUTH_ENABLED` in `src/config/app.ts`),
 so every page opens without an account.
 

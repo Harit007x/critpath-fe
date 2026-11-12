@@ -1,4 +1,4 @@
-import api from "@/lib/api";
+import api, { API_BASE_URL } from "@/lib/api";
 
 /** Mirrors critpath-be/src/lib/xer: the report for one checked XER file. */
 export type BrokenRow = {
@@ -36,8 +36,18 @@ export type CheckResult = {
   activities: CheckedActivity[];
 };
 
+/** An upload's report; `alreadyStored` when the same file was uploaded before. */
+export type XerUploadResult = XerReport & { alreadyStored: boolean };
+
 export type XerReport = {
-  file: { name: string; sizeBytes: number; sample: string | null };
+  file: {
+    /** The stored upload; null for a bundled sample, which is not stored. */
+    id: string | null;
+    name: string;
+    sizeBytes: number;
+    sample: string | null;
+    uploadedAt: string | null;
+  };
   p6Version: string | null;
   exportDate: string | null;
   projects: { id: string; shortName: string; name: string; dataDate: string | null }[];
@@ -63,6 +73,21 @@ export type XerSample = {
   source: string;
 };
 
+/** One stored upload in the list (GET /xer/files). */
+export type XerUpload = {
+  id: string;
+  fileName: string;
+  sizeBytes: number;
+  projectName: string | null;
+  activities: number;
+  relationships: number;
+  brokenRowCount: number;
+  missingLinks: number;
+  negativeFloat: number;
+  highFloat: number;
+  uploadedAt: string;
+};
+
 type Envelope<T> = { success: boolean; data: T };
 
 export const xerService = {
@@ -76,10 +101,26 @@ export const xerService = {
     return data.data;
   },
 
-  async checkFile(file: File): Promise<XerReport> {
+  /** Checks and stores a file; the same file again returns the stored copy, with `alreadyStored`. */
+  async checkFile(file: File): Promise<XerUploadResult> {
     const form = new FormData();
     form.append("file", file);
-    const { data } = await api.post<Envelope<XerReport>>("/xer/check", form);
+    const { data } = await api.post<Envelope<XerUploadResult>>("/xer/check", form);
     return data.data;
+  },
+
+  async uploads(): Promise<XerUpload[]> {
+    const { data } = await api.get<Envelope<XerUpload[]>>("/xer/files");
+    return data.data;
+  },
+
+  async upload(id: string): Promise<XerReport> {
+    const { data } = await api.get<Envelope<XerReport>>(`/xer/files/${encodeURIComponent(id)}`);
+    return data.data;
+  },
+
+  /** A link that downloads the stored file as it was uploaded. */
+  contentUrl(id: string): string {
+    return `${API_BASE_URL}/xer/files/${encodeURIComponent(id)}/content`;
   },
 };

@@ -1,4 +1,4 @@
-# The app is behind sign-in; www.thecritpath.com is the site for search.
+# A demo deployment: kept out of search results.
 # Pages stay crawlable so Google can read their noindex (public/_headers) and drop them;
 # the API is not pages at all.
 User-agent: *

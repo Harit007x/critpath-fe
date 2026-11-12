@@ -164,6 +164,12 @@
   body {
     @apply bg-background text-foreground;
     }
+  /* Tailwind 4 leaves buttons on the default arrow; anything clickable shows the hand. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+    }
   html {
     @apply font-mono;
     }

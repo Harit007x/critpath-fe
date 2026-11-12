@@ -1,5 +1,5 @@
 # Cloudflare static assets; what vercel.json's headers did.
-# The app is behind sign-in; www.thecritpath.com is the site for search.
+# A demo deployment: kept out of search results.
 /*
   X-Robots-Tag: noindex
   Strict-Transport-Security: max-age=63072000

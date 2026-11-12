@@ -6,8 +6,8 @@
   "name": "critpath-fe",
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-20",
-  // Stated here so a deploy from Workers Builds keeps it.
-  "routes": [{ "pattern": "app.thecritpath.com", "custom_domain": true }],
+  // Served on the free critpath-fe.<account>.workers.dev address; no custom domain.
+  "workers_dev": true,
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
