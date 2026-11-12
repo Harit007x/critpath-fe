@@ -1,0 +1,6 @@
+# The app is behind sign-in; www.thecritpath.com is the site for search.
+# Pages stay crawlable so Google can read their noindex (public/_headers) and drop them;
+# the API is not pages at all.
+User-agent: *
+Disallow: /api/
+Disallow: /.well-known/

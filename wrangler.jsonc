@@ -1,0 +1,22 @@
+// The web app on Cloudflare. `pnpm build` writes `dist/`; Workers static assets serve it,
+// with the SPA's index.html for any other path. `/api/*` and `/.well-known/*` run the Worker in
+// `worker/index.ts`, which proxies them to the API on Railway; those are the only billed requests.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "critpath-fe",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-20",
+  // Stated here so a deploy from Workers Builds keeps it.
+  "routes": [{ "pattern": "app.thecritpath.com", "custom_domain": true }],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/.well-known/*"]
+  },
+  "vars": {
+    // Hard-coded in vercel.json before; a var here so a test deploy can point elsewhere.
+    "API_ORIGIN": "https://critpath-be-production.up.railway.app"
+  },
+  "observability": { "enabled": true }
+}
